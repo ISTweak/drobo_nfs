@@ -16,15 +16,13 @@ popd
 
 ### LIBTIRPC ###
 _build_libtirpc() {
-local VERSION="0.3.2"
+local VERSION="1.0.1"
 local FOLDER="libtirpc-${VERSION}"
 local FILE="${FOLDER}.tar.bz2"
 local URL="http://sourceforge.net/projects/libtirpc/files/libtirpc/${VERSION}/${FILE}"
 
 _download_bz2 "${FILE}" "${URL}" "${FOLDER}"
-cp -vf "src/${FOLDER}-api_fixes-1.patch" "target/${FOLDER}/"
 pushd "target/${FOLDER}"
-patch -p1 -i "${FOLDER}-api_fixes-1.patch"
 aclocal
 automake
 sed -i -e "s|/etc/netconfig|${DEST}/etc/netconfig|g" tirpc/netconfig.h
@@ -39,7 +37,7 @@ popd
 
 ### RPCBIND ###
 _build_rpcbind() {
-local VERSION="0.2.3"
+local VERSION="0.2.4"
 local FOLDER="rpcbind-${VERSION}"
 local FILE="${FOLDER}.tar.bz2"
 local URL="http://sourceforge.net/projects/rpcbind/files/rpcbind/${VERSION}/${FILE}"
@@ -73,7 +71,7 @@ popd
 
 ### NFSUTILS ###
 _build_nfsutils() {
-local VERSION="1.3.2"
+local VERSION="2.1.1"
 local FOLDER="nfs-utils-${VERSION}"
 local FILE="${FOLDER}.tar.bz2"
 local URL="http://sourceforge.net/projects/nfs/files/nfs-utils/${VERSION}/${FILE}"
@@ -81,6 +79,9 @@ local files
 
 _download_bz2 "${FILE}" "${URL}" "${FOLDER}"
 pushd "target/${FOLDER}"
+
+# utils/mount/network.c
+patch -u utils/mount/network.c < ../../src/nfs-utils-2.1.1-network.patch
 
 # /etc adjustment
 files="support/include/nfslib.h utils/mount/configfile.c utils/gssd/gssd.h utils/gssd/svcgssd.c utils/nfsidmap/nfsidmap.c"
