@@ -7,7 +7,7 @@
 
 framework_version="2.1"
 name="nfs"
-version="1.3.2-1"
+version="2.1.1"
 description="NFS v3 server"
 depends=""
 webui=""
@@ -25,11 +25,6 @@ errorfile="${tmp_dir}/error.txt"
 statuser="nobody"
 mountpoint="/proc/fs/nfsd"
 lockfile="${tmp_dir}/rpcbind.lock"
-
-# backwards compatibility
-if [ -z "${FRAMEWORK_VERSION:-}" ]; then
-  . "${prog_dir}/libexec/service.subr"
-fi
 
 # _is_daemon_running
 # $1: daemon
@@ -76,18 +71,6 @@ is_stopped() {
   if _is_daemon_running "${mountd}"; then return 1; fi
   if _is_daemon_running "${rpcbind}"; then return 1; fi
   return 0;
-}
-
-# returns a string like "3.2.0 [8.45.72385]"
-#         or nothing if nasd is not running
-_firmware_version() {
-  local line
-  timeout -t 1 /usr/bin/nc 127.0.0.1 5000 2> "${logfile}" | while read line; do
-    if (echo ${line} | grep -q mVersion); then
-      echo ${line} | sed 's|.*<mVersion>\(.*\)</mVersion>.*|\1|g'
-      break;
-    fi
-  done
 }
 
 _load_modules() {
