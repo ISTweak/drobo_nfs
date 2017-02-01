@@ -5,12 +5,9 @@
 # import DroboApps framework functions
 . /etc/service.subr
 
-framework_version="2.1"
 name="nfs"
 version="2.1.1"
 description="NFS v3 server"
-depends=""
-webui=""
 
 prog_dir="$(dirname $(realpath ${0}))"
 rpcbind="${prog_dir}/bin/rpcbind"
@@ -25,6 +22,7 @@ errorfile="${tmp_dir}/error.txt"
 statuser="nobody"
 mountpoint="/proc/fs/nfsd"
 lockfile="${tmp_dir}/rpcbind.lock"
+pidfile="${tmp_dir}/rpc.statd.pid"
 
 # _is_daemon_running
 # $1: daemon
@@ -151,12 +149,27 @@ reload() {
 # boilerplate
 if ! grep -q ^tmpfs /proc/mounts; then mount -t tmpfs tmpfs /tmp; fi
 if [ ! -d "${tmp_dir}" ]; then mkdir -p "${tmp_dir}"; fi
-exec 3>&1 4>&2 1>> "${logfile}" 2>&1
-STDOUT=">&3"
-STDERR=">&4"
-echo "$(date +"%Y-%m-%d %H-%M-%S"):" "${0}" "${@}"
-set -o errexit  # exit on uncaught error code
-set -o nounset  # exit on unset variable
-set -o xtrace   # enable script tracing
 
-main "${@}"
+case "$1" in
+start)
+        start
+        ;;
+stop)
+        stop
+        ;;
+restart)
+        stop_service
+        sleep 3
+        start_service
+        ;;
+status)
+        status
+        ;;
+reload)
+        reload
+		;;
+*)
+        echo "Usage: $0 [start|stop|restart|status]"
+        exit 1
+        ;;
+esac
