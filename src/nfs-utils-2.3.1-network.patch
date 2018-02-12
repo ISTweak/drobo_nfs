@@ -1,0 +1,18 @@
+--- utils/mount/network.c	Thu Dec 21 00:40:36 2017
++++ utils/mount/network.c	Mon Feb 12 10:21:44 2018
+@@ -1132,6 +1132,7 @@
+ 		if (bind(sock, SAFE_SOCKADDR(&sin), sizeof(sin)) < 0)
+ 			goto out;
+ 		break;
++#if 0
+ 	case AF_INET6:
+ 		/* Make sure the call-back address is public/permanent */
+ 		val = IPV6_PREFER_SRC_PUBLIC;
+@@ -1139,6 +1140,7 @@
+ 		if (bind(sock, SAFE_SOCKADDR(&sin6), sizeof(sin6)) < 0)
+ 			goto out;
+ 		break;
++#endif
+ 	default:
+ 		errno = EAFNOSUPPORT;
+ 		goto out;

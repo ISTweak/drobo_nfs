@@ -30,7 +30,7 @@ Each invocation creates a log file with all the generated output.
 * libtirpc: http://sourceforge.net/projects/libtirpc/
 * rpcbind: http://sourceforge.net/projects/rpcbind/
 * libblkid: https://www.kernel.org/pub/linux/utils/util-linux/
-* nfs-utils: http://cesanta.com/mongoose.shtml
+* nfs-utils: https://sourceforge.net/projects/nfs/
 
 <sub>**Disclaimer**</sub>
 

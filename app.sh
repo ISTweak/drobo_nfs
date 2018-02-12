@@ -16,7 +16,7 @@ popd
 
 ### LIBTIRPC ###
 _build_libtirpc() {
-local VERSION="1.0.1"
+local VERSION="1.0.2"
 local FOLDER="libtirpc-${VERSION}"
 local FILE="${FOLDER}.tar.bz2"
 local URL="http://sourceforge.net/projects/libtirpc/files/libtirpc/${VERSION}/${FILE}"
@@ -71,7 +71,7 @@ popd
 
 ### NFSUTILS ###
 _build_nfsutils() {
-local VERSION="2.1.1"
+local VERSION="2.3.1"
 local FOLDER="nfs-utils-${VERSION}"
 local FILE="${FOLDER}.tar.bz2"
 local URL="http://sourceforge.net/projects/nfs/files/nfs-utils/${VERSION}/${FILE}"
@@ -81,7 +81,7 @@ _download_bz2 "${FILE}" "${URL}" "${FOLDER}"
 pushd "target/${FOLDER}"
 
 # utils/mount/network.c
-patch -u utils/mount/network.c < ../../src/nfs-utils-2.1.1-network.patch
+patch -u utils/mount/network.c < ../../src/nfs-utils-2.3.1-network.patch
 
 # /etc adjustment
 files="support/include/nfslib.h utils/mount/configfile.c utils/gssd/gssd.h utils/gssd/svcgssd.c utils/nfsidmap/nfsidmap.c"
@@ -109,7 +109,7 @@ for f in $files; do sed -i -e "s|/var/run/sm-notify.pid|/tmp/DroboApps/nfs/sm-no
 files="support/include/exportfs.h utils/statd/sm-notify.c utils/idmapd/idmapd.c utils/mount/nfs4mount.c utils/gssd/gssd.h utils/blkmapd/device-discovery.c"
 for f in $files; do sed -i -e "s|\"/var/lib|\"${DEST}/var/lib|g" $f; done
 
-PKG_CONFIG_PATH="${DEST}/lib/pkgconfig" ./configure --host="${HOST}" --prefix="${DEST}" --exec-prefix="${DEST}" --sbindir="${DEST}/sbin" --mandir="${DEST}/man" --disable-static --with-statedir="${DEST}/var/lib/nfs" --with-statdpath="${DEST}/var/lib/nfs" --with-statduser=nobody --with-start-statd="${DEST}/sbin/start-statd" --without-systemd --with-mountfile="${DEST}/etc/nfsmounts.conf" --without-tcp-wrappers --enable-tirpc --enable-ipv6 --disable-nfsv4 --disable-nfsv41 --disable-gss --disable-ipv6 CC_FOR_BUILD=$CC LDFLAGS="${LDFLAGS:-} -L${LIBATOMIC}/.libs" LIBS="-llinux-atomic" libblkid_cv_is_recent=yes
+PKG_CONFIG_PATH="${DEST}/lib/pkgconfig" ./configure --host="${HOST}" --prefix="${DEST}" --exec-prefix="${DEST}" --sbindir="${DEST}/sbin" --mandir="${DEST}/man" --disable-static --with-statedir="${DEST}/var/lib/nfs" --with-statdpath="${DEST}/var/lib/nfs" --with-statduser=nobody --with-start-statd="${DEST}/sbin/start-statd" --without-systemd --with-mountfile="${DEST}/etc/nfsmounts.conf" --without-tcp-wrappers --enable-tirpc --enable-ipv6 --disable-nfsv4 --disable-nfsv41 --disable-gss --disable-ipv6 --disable-ldap CC_FOR_BUILD=$CC LDFLAGS="${LDFLAGS:-} -L${LIBATOMIC} -L${LIBATOMIC}/.libs" LIBS="-llinux-atomic" libblkid_cv_is_recent=yes
 make
 make install
 mkdir -p "${DEST}/etc/exports.d" "${DEST}/var/lib/nfs/statd" "${DEST}/var/lock/subsys" "${DEST}/var/log" "${DEST}/var/run"
